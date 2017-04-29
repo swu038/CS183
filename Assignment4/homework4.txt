@@ -1,0 +1,6 @@
+1)Jan 15, Jan 18, Jan 19, Jan 20, and Jan 21. The good thing about this many incremental backups is that it takes up less space than full backups. Performing the backups also takes less time. However, the bad thing about this many incremental backups is that it can be time-consuming to restore because you will have to restore multiple tapes since each level only restores uptill n-1 level. It is also more riskier because if any of the tapes are missing or damaged, then a full restoration may not be possible.
+
+2) a) It is a class A network. 
+   b) CIDR: /8. Base 10: 255.0.0.0
+   c) 1) 10.3.12.1
+   c) 2) 10.3.12.255  

@@ -1,0 +1,27 @@
+For one.pl 
+The keyword for determining if if was a postfix reject were the words "postfix" and "reject" as seen in: 
+"Mar  1 00:00:03 avas postfix/smtpd[1822]: 4EC6561A83:reject:RCPT from unknown[62.113.122.52]: 450apache@s2.raexpert.ru>:Sender address rejected: Domain not found; from=<apache@s2.raexpert.ru> to=<kennedyg@example.com> proto=ESMTP helo=<s2.raexpert.ru> 
+
+The keyword for determining if it was an amavis quarantine were the words "amavis" and "Not-Delivered":
+Mar  1 00:02:07 avas amavis[2313]: (02313-02) Not-Delivered, <shockwave@mms.shockwave.com> -> <mcdonald@example.com>, quarantine spam-33c29c9491632c4056a53e64c879cceb-20040301-000207-02313-02, Message-ID: <1078128091785.ke26075047ace859awe4@mr>, Hits: 11.138
+
+For two.pl
+A known connection would be: 
+Mar  1 00:00:03 avas postfix/smtpd[2314]: connect from host81-153-11-97.range81-153.btcentralplus.com[81.153.11.97]
+
+An unknown connection would be: 
+Mar  1 00:00:02 avas postfix/smtpd[1822]: connect from unknown[62.113.122.52]
+
+
+For three.pl
+I am only considering the from and to addresses as:
+"from=<apache@s2.raexpert.ru>" and "to=<kennedyg@example.com>" 
+
+For four.pl 
+I only looked at the lines with dnsbl.sorbs.net. 
+For unique IP count, this format was what I conidered to be a unique IP: "IP=68.93.83.242".
+For the from and to addresses, they took up the format:
+"from=<murielvinsonqi@merlin.net.au>" and "to=<smithb@example.com>". 
+
+For five.pl
+I commented out my test case, which was outputting the arguments because the professor said that there should not be any outputs.  

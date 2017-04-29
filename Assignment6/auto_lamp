@@ -1,0 +1,93 @@
+#!/bin/bash
+
+#check if httpd is installed
+if yum list installed httpd > /dev/null 2>&1; then   #write std err to trash 
+    echo "httpd package is already installed, continuing..."; 
+else
+    echo "httpd package is not installed. Package is being installed now..."; 
+    yum install -y httpd > /dev/null 2>&1  
+fi
+
+#configure ServerName
+sed -i "/#ServerName www.example.com:80/a ServerName $(hostname -s):80" /etc/httpd/conf/httpd.conf 
+
+#sed -i "/hey/a \ ServerName $(hostname -s):80" test.sh  
+#the -i option saves the file. The \ after the a adds a tab when inserting the texts. 
+ 
+#remove FollowSymLinks 
+sed -i '/Options Indexes/ {N; 's/FollowSymLinks//'}' /etc/httpd/conf/httpd.conf
+
+#sed -i '/^Options Indexes/ {N; 's/FollowSymLinks//'}' test.sh
+#the ^ means beginning of the line
+
+#start httpd service
+service httpd start > /dev/null 2>&1 
+
+#check if service started with any errors
+if [ "$?" -eq "0" ]; then
+    echo "Service has started!"
+    service httpd stop > /dev/null 2>&1 
+else
+    echo "Service has failed to start!" 1>&2   
+    exit 5 
+fi
+
+#check if php is installed
+if yum list installed php > /dev/null 2>&1; then
+    if [ ! -e /etc/httpd/conf.d/php.conf ]; then 
+        echo "php.conf does not exist error!" 1>&2
+        exit 4
+    fi
+else
+    yum install -y php > /dev/null 2>&1 
+    if [ ! -e /etc/httpd/conf.d/php.conf ]; then
+        echo "php.conf does not exist error!" 1>&2
+        exit 4
+    fi
+fi 
+
+#check if mysql-server php-mysql is installed             
+if yum list installed mysql-server php-mysql > /dev/null 2>&1; then  
+    echo "mysql-server and php-mysql are installed!"
+else
+    yum install -y mysql-server php-mysql > /dev/null 2>&1 
+fi
+
+#restart web server
+/etc/init.d/httpd restart > /dev/null 2>&1  
+
+#user chkconfig to add httpd and mysqld to start up scripts 
+chkconfig httpd on 
+chkconfig mysqld on 
+
+#print to stdout
+chkconfig --list httpd
+chkconfig --list mysqld
+
+#use lab6 MYSQL instructions
+#start the MySQL server 
+/etc/init.d/mysqld start > /dev/null 2>&1  
+
+#get mysql.txt. Note: the stuff before http is what you want to name it. 
+wget -O mysql.txt http://boxes.cs.ucr.edu/cs183/mysql.txt > /dev/null 2>&1
+
+#run mysql
+mysql < mysql.txt 
+
+#get gradebook
+wget -O gradebook.php http://boxes.cs.ucr.edu/cs183/gradebook.txt > /dev/null 2>&1 
+
+#copy gradebook over to html
+cp gradebook.php /var/www/html 
+
+#run elinks
+wget -O webpage.txt http://127.0.0.1/gradebook.php > /dev/null 2>&1
+
+#compare the txts 
+cmp -s webpage.txt expected.txt
+
+if [ "$?" -eq "0" ] 
+    exit 0
+else
+    exit 8 
+fi  
